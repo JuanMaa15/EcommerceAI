@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/Elementos de la solución/">
+    <File Path="AGENTS.md" />
+  </Folder>
+  <Project Path="EcommerceAI.Domain/EcommerceAI.Domain.csproj" />
+  <Project Path="EcommerceAI.WebApi/EcommerceAI.WebApi.csproj" />
+</Solution>
