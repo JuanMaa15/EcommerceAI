@@ -24,6 +24,9 @@ public partial class User
     public DateTime? UpdatedEmailAt { get; private set; }
     public DateTime? UpdatedPasswordAt { get; private set; }
 
+    private readonly List<Address> _addresses = new();
+    public IReadOnlyCollection<Address> Addresses => _addresses.AsReadOnly();
+
     // Constructor requerido por EF Core para materializar la entidad sin ejecutar validaciones.
     private User()
     {
@@ -133,6 +136,52 @@ public partial class User
     {
         VerificationEmail = true;
         UpdatedAt = DateTime.UtcNow;
+    }
+
+    public Address AddAddress(string addressLine, string city, string province, string country, string phone, string? reference = null)
+    {
+        var address = new Address(Id, addressLine, city, province, country, phone, reference);
+
+        // La primera dirección del usuario queda como predeterminada.
+        if (!_addresses.Any(a => a.IsDefault))
+            address.MarkAsDefault();
+
+        _addresses.Add(address);
+        return address;
+    }
+
+    public void SetDefaultAddress(Guid addressId)
+    {
+        var address = GetAddress(addressId);
+
+        if (address.IsDefault)
+            return;
+
+        address.MarkAsDefault();
+
+        foreach (var other in _addresses.Where(a => a.IsDefault && a.Id != addressId && BelongsToUser(a)))
+            other.UnmarkAsDefault();
+    }
+
+    public void ActivateAddress(Guid addressId)
+    {
+        GetAddress(addressId).Activate();
+    }
+
+    public void DeactivateAddress(Guid addressId)
+    {
+        GetAddress(addressId).Deactivate();
+    }
+
+    private Address GetAddress(Guid addressId)
+    {
+        return _addresses.FirstOrDefault(a => a.Id == addressId && BelongsToUser(a))
+            ?? throw new DomainException("La dirección no existe para este usuario.");
+    }
+
+    private bool BelongsToUser(Address address)
+    {
+        return address.UserId == Id;
     }
 
     [GeneratedRegex(@"^[^@\s]+@[^@\s]+\.[a-zA-Z]{2,}$")]
