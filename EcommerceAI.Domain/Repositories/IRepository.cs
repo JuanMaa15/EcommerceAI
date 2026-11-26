@@ -4,7 +4,7 @@ namespace EcommerceAI.Domain.Repositories;
 
 public interface IRepository<T> where T : class, IEntity
 {
-    Task AddAsync(T entity, CancellationToken cancellationToken = default);
+    void Add(T entity);
     void Update(T entity);
     Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<T>> GetAllAsync(CancellationToken cancellationToken = default);
