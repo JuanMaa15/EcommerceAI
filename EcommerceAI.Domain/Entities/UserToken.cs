@@ -1,9 +1,10 @@
 using EcommerceAI.Domain.Enums;
 using EcommerceAI.Domain.Exceptions;
+using EcommerceAI.Domain.Interfaces;
 
 namespace EcommerceAI.Domain.Entities;
 
-public class UserToken
+public class UserToken : IEntity
 {
     private const int TokenMaxLength = 512;
 
@@ -78,7 +79,16 @@ public class UserToken
         UpdatedAt = DateTime.UtcNow;
     }
 
-    public void Revoke()
+    // Reactivar un token revocado reabriría, por ejemplo, una sesión cerrada por el usuario.
+    public void Activate()
+    {
+        if (IsActive)
+            throw new DomainException("El token ya está activo.");
+
+        throw new DomainException("Un token revocado no puede reactivarse.");
+    }
+
+    public void Deactivate()
     {
         IsActive = false;
         UpdatedAt = DateTime.UtcNow;

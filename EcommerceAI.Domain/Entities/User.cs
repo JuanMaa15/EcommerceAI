@@ -1,10 +1,11 @@
 ﻿using System.Text.RegularExpressions;
 using EcommerceAI.Domain.Enums;
 using EcommerceAI.Domain.Exceptions;
+using EcommerceAI.Domain.Interfaces;
 
 namespace EcommerceAI.Domain.Entities;
 
-public partial class User
+public partial class User : IEntity
 {
     private const int NameMinLength = 2;
     private const int NameMaxLength = 50;
